@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hibernate-configuration>
+
+    <!-- Настройки фабрики сессий -->
+    <session-factory>
+
+        <!-- Параметры подключения к базе данных -->
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:7777/mysql</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password"></property>
+
+        <!-- Диалект базы данных (для MySQL) -->
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
+
+        <!-- Управление созданием схемы базы данных -->
+        <property name="hibernate.hbm2ddl.auto">none</property>  <!-- Можно установить: 'none', 'update', 'create', 'create-drop' -->
+    </session-factory>
+</hibernate-configuration>
