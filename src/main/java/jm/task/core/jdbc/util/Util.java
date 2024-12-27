@@ -40,15 +40,12 @@ import java.util.logging.SimpleFormatter;
  * </pre>
  */
 public class Util {
-    //private static Configuration configuration = new Configuration().configure();//подключение через xml
-    private static Configuration configuration;
+    private static final Configuration configuration;
     private static final SessionFactory sessionFactory;
 
     static {
-        //configuration = new Configuration().configure();
         configuration = new Configuration();
         configuration.setProperty("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver");
-        //configuration.setProperty("")
         configuration.setProperty("hibernate.connection.url","jdbc:mysql://localhost:7777/mysql" );
         configuration.setProperty("hibernate.connection.username", "root");
         configuration.setProperty("hibernate.connection.password", "");

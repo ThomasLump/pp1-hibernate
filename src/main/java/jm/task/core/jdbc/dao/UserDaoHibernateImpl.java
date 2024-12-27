@@ -3,7 +3,6 @@ package jm.task.core.jdbc.dao;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import java.util.List;
@@ -17,10 +16,10 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public void createUsersTable() {
         String sql = "CREATE TABLE IF NOT EXISTS User (id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
-                    "name VARCHAR(255), lastName VARCHAR(255), age INT)";
+                "name VARCHAR(255), lastName VARCHAR(255), age TINYINT)";
 
         Util.executeWithSession(session -> {
-            Util.executeWithTransaction( session, () -> {
+            Util.executeWithTransaction(session, () -> {
                 session.createSQLQuery(sql).executeUpdate();
             });
         });
@@ -32,7 +31,7 @@ public class UserDaoHibernateImpl implements UserDao {
         String sql = "DROP TABLE IF EXISTS User";
 
         Util.executeWithSession(session -> {
-            Util.executeWithTransaction( session, () -> {
+            Util.executeWithTransaction(session, () -> {
                 session.createSQLQuery(sql).executeUpdate();
             });
         });
@@ -40,10 +39,10 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        User newUser = new User(name,lastName,(byte) age);
+        User newUser = new User(name, lastName, (byte) age);
 
         Util.executeWithSession(session -> {
-            Util.executeWithTransaction( session, () -> {
+            Util.executeWithTransaction(session, () -> {
                 session.save(newUser);
             });
         });
@@ -51,12 +50,9 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void removeUserById(long id) {
-        User anigilatedUser = new User();
-        anigilatedUser.setId(id);
-
-        Util.executeWithSession( session -> {
+        Util.executeWithSession(session -> {
             Util.executeWithTransaction(session, () -> {
-                session.delete(anigilatedUser);
+                session.createQuery("delete from User where id = :userfordeleteid").setParameter("userfordeleteid", id).executeUpdate();
             });
         });
     }
@@ -64,30 +60,27 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public List<User> getAllUsers() {
         return Util.executeWithSession(session -> {
-            return Util.executeWithTransaction( session, () ->
+            return Util.executeWithTransaction(session, () ->
                     session.createQuery("from User", User.class).list());
         });
     }
 
     @Override
     public void cleanUsersTable() {
-        Util.executeWithSession( session -> {
+        Util.executeWithSession(session -> {
             Util.executeWithTransaction(session, () -> {
-                session.createQuery("DELETE FROM User").executeUpdate();
+                session.createNativeQuery("TRUNCATE TABLE IF EXIST User").executeUpdate();
             });
         });
     }
 
     /**
      * @deprecated
-     * @param name
-     * @param lastname
-     * @param age
      */
     public void saveUserOld(String name, String lastname, byte age) {
-        User newUser = new User(name,lastname,(byte) age);
+        User newUser = new User(name, lastname, (byte) age);
 
-        try(Session session = Util.getSessionFactory().openSession()) {
+        try (Session session = Util.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
             session.save(newUser);
             try {
